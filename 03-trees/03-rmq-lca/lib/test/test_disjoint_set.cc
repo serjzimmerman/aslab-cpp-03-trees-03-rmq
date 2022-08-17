@@ -8,7 +8,7 @@
 #include <set>
 #include <string>
 
-#include "disjoint_set.hpp"
+#include "disjoint_set_forest.hpp"
 
 int main(int argc, char *argv[]) {
   ::testing::InitGoogleTest(&argc, argv);

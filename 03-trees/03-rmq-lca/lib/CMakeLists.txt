@@ -2,7 +2,8 @@ set(LIBRARY_SOURCES
   src/bs_order_tree.cc
 )
 
-add_library(throttle INTERFACE include)
+add_library(throttle INTERFACE)
+target_include_directories(throttle INTERFACE include)
 
 set(THROTTLE_TEST
   test/test_disjoint_set.cc
