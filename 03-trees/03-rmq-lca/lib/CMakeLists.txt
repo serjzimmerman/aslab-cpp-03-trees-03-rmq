@@ -6,12 +6,14 @@ add_library(throttle INTERFACE)
 target_include_directories(throttle INTERFACE include)
 
 set(THROTTLE_TEST
-  test/test_disjoint_set.cc
+  test/disjoint_set.cc
+  test/cartesian_tree.cc
+  test/main.cc
 )
 
 if (ENABLE_GTEST)
-  add_executable(splay_order_test ${THROTTLE_TEST})
-  target_include_directories(splay_order_test PRIVATE src include)
-  target_link_libraries(splay_order_test throttle ${GTEST_BOTH_LIBRARIES})
-  gtest_discover_tests(splay_order_test)
+  add_executable(unit-test-throttle ${THROTTLE_TEST})
+  target_include_directories(unit-test-throttle PRIVATE src include)
+  target_link_libraries(unit-test-throttle throttle ${GTEST_BOTH_LIBRARIES})
+  gtest_discover_tests(unit-test-throttle)
 endif()

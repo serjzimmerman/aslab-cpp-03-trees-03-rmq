@@ -23,15 +23,12 @@ int main() {
   // std::cout << set;
 
   throttle::cartesian_tree<int> tree;
-  tree.append(4);
-  tree.append(1);
-  tree.append(2);
-  tree.append(4);
-  tree.append(4);
-  tree.append(5);
-  tree.append(2);
-  tree.append(8);
-  tree.append(1);
+  std::vector<int> test_case;
+  std::generate_n(std::back_inserter(test_case), 1 << 8, []() { return std::rand() % (1 << 6); });
+
+  for (const auto &v : test_case) {
+    tree.append(v);
+  }
 
   std::cout << tree;
 }

@@ -9,8 +9,3 @@
 #include <string>
 
 #include "disjoint_set_forest.hpp"
-
-int main(int argc, char *argv[]) {
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

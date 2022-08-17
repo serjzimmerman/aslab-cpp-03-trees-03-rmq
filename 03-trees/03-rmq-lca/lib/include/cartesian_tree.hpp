@@ -132,10 +132,6 @@ public:
         p_ostream << "\tnode_" << i << " -> node_0__" << i << ";\n";
         p_ostream << "\tnode_0__" << i << " [label = \"NIL\"];\n";
       }
-
-      // if (node.m_parent) {
-      //   p_ostream << "\tnode_" << i << " -> node_" << node.m_parent << ";\n";
-      // }
     }
     p_ostream << "}\n";
   }
