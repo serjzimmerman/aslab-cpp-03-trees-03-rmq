@@ -1,34 +1,39 @@
 #include <chrono>
 #include <iostream>
 
-#include "cartesian_tree.hpp"
+#include "cartesian_map.hpp"
+#include "cartesian_set.hpp"
+
 #include "disjoint_map_forest.hpp"
 #include "disjoint_set_forest.hpp"
+#include "offline_rmq.hpp"
 
+template class throttle::cartesian_set<int>;
+template class throttle::cartesian_map<int, bool>;
 #include <cstdlib>
 
+#if 0
+namespace {
+template <typename t_proxy> void inorder_walk_helper(t_proxy node) {
+  if (!node) return;
+  inorder_walk_helper(node.left());
+  std::cout << node->first << " -- " << node->second << "\n";
+  inorder_walk_helper(node.right());
+}
+
+template <typename t_map> void inorder_walk(const t_map &map) {
+  inorder_walk_helper(map.root());
+}
+} // namespace
+#endif
+
 int main() {
-  throttle::disjoint_map_forest<int, bool> set;
+  std::vector<int> vec{5, 10, 20, 3, -5, 7, 28, -6, 13, -44, 0, 1};
+  std::vector<std::pair<std::size_t, std::size_t>> q{{1, 3}, {4, 9}, {0, 11}, {10, 11}};
+  auto ans = throttle::offline_rmq<int>(vec.begin(), vec.end(), q.begin(), q.end());
 
-  for (int i = 0; i < 128; ++i) {
-    set.make_set(i, false);
+  for (const auto &v : ans) {
+    std::cout << v << " ";
   }
-
-  for (int i = 0; i < 64; ++i) {
-    int index1 = rand() % 128;
-    int index2 = rand() % 128;
-    set.union_set(index1, index2);
-  }
-
-  // std::cout << set;
-
-  throttle::cartesian_tree<int> tree;
-  std::vector<int> test_case;
-  std::generate_n(std::back_inserter(test_case), 1 << 8, []() { return std::rand() % (1 << 6); });
-
-  for (const auto &v : test_case) {
-    tree.append(v);
-  }
-
-  std::cout << tree;
+  std::cout << "\n";
 }

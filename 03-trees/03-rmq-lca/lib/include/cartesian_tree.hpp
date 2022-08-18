@@ -30,15 +30,18 @@ struct cartesian_tree_node {
 };
 } // namespace detail
 
-template <typename t_key_type, typename t_comp = std::less<t_key_type>> class cartesian_tree {
+template <typename t_value_type, typename t_comp = std::less<t_value_type>> class cartesian_tree {
+protected:
   using node_type = typename detail::cartesian_tree_node;
 
 public:
   using size_type = node_type::size_type;
+  using value_type = t_value_type;
+  using comp = t_comp;
 
-private:
+protected:
   std::vector<node_type> m_tree_vec;
-  std::vector<t_key_type> m_key_vec;
+  std::vector<t_value_type> m_key_vec;
   size_type m_rightmost;
   size_type m_root;
 
@@ -50,7 +53,11 @@ private:
     return m_tree_vec.at(p_index);
   }
 
-  const t_key_type &key(size_type p_index) const {
+  t_value_type &value(size_type p_index) {
+    return m_key_vec.at(p_index - 1);
+  }
+
+  const t_value_type &value(size_type p_index) const {
     return m_key_vec.at(p_index - 1);
   }
 
@@ -69,7 +76,7 @@ public:
   }
 
 private:
-  void insert(const t_key_type &p_key) {
+  void insert(const t_value_type &p_key) {
     m_tree_vec.emplace_back();
     try {
       m_key_vec.emplace_back(p_key);
@@ -80,7 +87,7 @@ private:
   }
 
 public:
-  void append(const t_key_type &p_key) {
+  void append(const t_value_type &p_key) {
     bool is_empty = empty();
     insert(p_key);
 
@@ -91,10 +98,10 @@ public:
     }
 
     size_type curr = m_rightmost;
-    bool is_key_less = t_comp{}(p_key, key(curr));
+    bool is_key_less = t_comp{}(p_key, value(curr));
     while (curr && is_key_less) {
       curr = at_index(curr).m_parent;
-      if (curr) is_key_less = t_comp{}(p_key, key(curr));
+      if (curr) is_key_less = t_comp{}(p_key, value(curr));
     }
 
     m_rightmost = new_index;
@@ -112,11 +119,11 @@ public:
     curr_node.m_right = m_rightmost;
     rightmost_node.m_parent = curr;
   }
-
+#if 0
   template <typename t_stream> void dump(t_stream &p_ostream) const {
     p_ostream << "digraph {\n";
     for (size_type i = 1; i < m_tree_vec.size(); ++i) {
-      p_ostream << "\tnode_" << i << " [label = \"" << key(i) << "\"];\n";
+      p_ostream << "\tnode_" << i << " [label = \"" << value(i) << "\"];\n";
       const node_type &node = at_index(i);
 
       if (node.m_left) {
@@ -135,12 +142,15 @@ public:
     }
     p_ostream << "}\n";
   }
+#endif
 };
 
-template <typename t_stream, typename t_key_type, typename t_comp>
-t_stream &operator<<(t_stream &p_ostream, cartesian_tree<t_key_type, t_comp> &p_tree) {
+#if 0
+template <typename t_stream, typename t_value_type, typename t_comp>
+t_stream &operator<<(t_stream &p_ostream, cartesian_tree<t_value_type, t_comp> &p_tree) {
   p_tree.dump(p_ostream);
   return p_ostream;
 }
+#endif
 
 } // namespace throttle

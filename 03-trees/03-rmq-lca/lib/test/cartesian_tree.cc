@@ -20,12 +20,12 @@ namespace {
 bool validate_min_heap_helper(const cartesian_tree_int &p_tree, cartesian_tree_int::size_type p_node_index) {
   bool valid = true;
   auto node = p_tree.at_index(p_node_index);
-  auto key = p_tree.key(p_node_index);
+  auto value = p_tree.value(p_node_index);
   if (node.m_left) {
-    valid = valid && (key <= p_tree.key(node.m_left)) && validate_min_heap_helper(p_tree, node.m_left);
+    valid = valid && (value <= p_tree.value(node.m_left)) && validate_min_heap_helper(p_tree, node.m_left);
   }
   if (node.m_right) {
-    valid = valid && (key <= p_tree.key(node.m_right)) && validate_min_heap_helper(p_tree, node.m_right);
+    valid = valid && (value <= p_tree.value(node.m_right)) && validate_min_heap_helper(p_tree, node.m_right);
   }
   return valid;
 }
@@ -76,7 +76,7 @@ bool validate_inorder_walk(const cartesian_tree_int &p_tree, t_inp_iter start, t
 
   size_type curr = leftmost(p_tree, p_tree.m_root);
   while (curr && start != finish) {
-    if (p_tree.key(curr) != *(start++)) {
+    if (p_tree.value(curr) != *(start++)) {
       return false;
     };
     curr = inorder_successor(p_tree, curr);

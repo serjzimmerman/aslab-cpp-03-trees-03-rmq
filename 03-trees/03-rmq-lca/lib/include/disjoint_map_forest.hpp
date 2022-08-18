@@ -57,8 +57,8 @@ public:
     size_type m_curr_index;
     disjoint_map_forest *m_map;
 
+  public:
     individual_set_proxy(size_type m_node, disjoint_map_forest *p_map) : m_curr_index{m_node}, m_map{p_map} {}
-
     reference operator*() {
       return m_map->at_index(m_curr_index).m_val;
     }
@@ -108,7 +108,7 @@ private:
 
 public:
   individual_set_proxy find_set(const key_type &p_key) {
-    return individual_set_proxy{find_set_impl(m_key_index_map.at(p_key))};
+    return individual_set_proxy{find_set_impl(m_key_index_map.at(p_key)), this};
   }
 
   void union_set(const key_type &p_left, const key_type &p_right) {
