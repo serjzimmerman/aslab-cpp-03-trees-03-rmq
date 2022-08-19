@@ -8,32 +8,54 @@
 #include "disjoint_set_forest.hpp"
 #include "offline_rmq.hpp"
 
+#if 0
 template class throttle::cartesian_set<int>;
 template class throttle::cartesian_map<int, bool>;
-#include <cstdlib>
-
-#if 0
-namespace {
-template <typename t_proxy> void inorder_walk_helper(t_proxy node) {
-  if (!node) return;
-  inorder_walk_helper(node.left());
-  std::cout << node->first << " -- " << node->second << "\n";
-  inorder_walk_helper(node.right());
-}
-
-template <typename t_map> void inorder_walk(const t_map &map) {
-  inorder_walk_helper(map.root());
-}
-} // namespace
+template class throttle::disjoint_map_forest<int, int>;
+template class throttle::disjoint_set_forest<int>;
 #endif
 
+#include <cstdlib>
+
 int main() {
-  std::vector<int> vec{5, 10, 20, 3, -5, 7, 28, -6, 13, -44, 0, 1};
-  std::vector<std::pair<std::size_t, std::size_t>> q{{1, 3}, {4, 9}, {0, 11}, {10, 11}};
-  auto ans = throttle::offline_rmq<int>(vec.begin(), vec.end(), q.begin(), q.end());
+  std::size_t n, m;
+  if (!(std::cin >> n)) {
+    std::cout << "Invalid input\n";
+    return 1;
+  }
+
+  std::vector<int> vec{};
+  vec.reserve(n);
+
+  for (std::size_t i = 0; i < n; ++i) {
+    int temp;
+    if (!(std::cin >> temp)) {
+      std::cout << "Invalid input\n";
+      return 1;
+    }
+    vec.push_back(temp);
+  }
+
+  if (!(std::cin >> m)) {
+    std::cout << "Invalid input\n";
+    return 1;
+  }
+
+  size_t max_index = vec.size() - 1;
+  std::vector<std::pair<std::size_t, std::size_t>> q_vec{};
+  for (std::size_t i = 0; i < m; ++i) {
+    std::size_t left, right;
+    if (!(std::cin >> left >> right) || (left >= right) || (left > max_index) || (right > max_index)) {
+      std::cout << "Invalid input\n";
+      return 1;
+    }
+    q_vec.push_back({left, right});
+  }
+
+  auto ans = throttle::offline_rmq<int>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
 
   for (const auto &v : ans) {
-    std::cout << v << " ";
+    std::cout << vec.at(v) << " ";
   }
   std::cout << "\n";
 }
