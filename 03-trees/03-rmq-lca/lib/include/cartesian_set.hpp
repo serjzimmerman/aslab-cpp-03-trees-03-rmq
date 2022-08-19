@@ -43,16 +43,16 @@ public:
     friend class cartesian_set;
     using size_type = cartesian_set::size_type;
 
-    const cartesian_set &m_tree;
+    const cartesian_set *m_tree;
     size_type m_curr_index;
-    const node_type &m_curr_node;
+    const node_type *m_curr_node;
 
     using value_type = key_type;
     using reference = const key_type &;
     using pointer = const key_type *;
 
-    node_proxy(const cartesian_set &p_tree, size_type p_index = 0)
-        : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{m_tree.at_index(m_curr_index)} {}
+    node_proxy(const cartesian_set *p_tree, size_type p_index = 0)
+        : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{&m_tree->at_index(m_curr_index)} {}
 
   public:
     size_type index() const {
@@ -60,15 +60,15 @@ public:
     }
 
     node_proxy left() const {
-      return node_proxy{m_tree, m_curr_node.m_left};
+      return node_proxy{m_tree, m_curr_node->m_left};
     }
 
     node_proxy right() const {
-      return node_proxy{m_tree, m_curr_node.m_right};
+      return node_proxy{m_tree, m_curr_node->m_right};
     }
 
     node_proxy parent() const {
-      return node_proxy{m_tree, m_curr_node.m_parent};
+      return node_proxy{m_tree, m_curr_node->m_parent};
     }
 
     bool valid() const {
@@ -80,11 +80,11 @@ public:
     }
 
     reference operator*() const {
-      return m_tree.value(m_curr_index);
+      return m_tree->value(m_curr_index);
     }
 
     pointer operator->() const {
-      return &m_tree.value(m_curr_index);
+      return &m_tree->value(m_curr_index);
     }
 
     bool operator==(const node_proxy &p_rhs) const {
@@ -97,11 +97,11 @@ public:
   };
 
   node_proxy at(size_type p_index) const {
-    return node_proxy{*this, p_index + 1};
+    return node_proxy{this, p_index + 1};
   }
 
   node_proxy root() const {
-    return node_proxy(*this, this->m_root);
+    return node_proxy(this, this->m_root);
   }
 };
 

@@ -8,7 +8,7 @@
 #include "disjoint_set_forest.hpp"
 #include "offline_rmq.hpp"
 
-#if 0
+#if 1
 template class throttle::cartesian_set<int>;
 template class throttle::cartesian_map<int, bool>;
 template class throttle::disjoint_map_forest<int, int>;
@@ -52,7 +52,7 @@ int main() {
     q_vec.push_back({left, right});
   }
 
-  auto ans = throttle::offline_rmq<int>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
+  auto ans = throttle::iterative_offline_rmq<int>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
 
   for (const auto &v : ans) {
     std::cout << vec.at(v) << " ";

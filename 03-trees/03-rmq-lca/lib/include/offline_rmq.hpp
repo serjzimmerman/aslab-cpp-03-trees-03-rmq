@@ -12,10 +12,10 @@
 
 #include <cstddef>
 #include <functional>
+#include <list>
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <list>
 
 #include "cartesian_map.hpp"
 #include "disjoint_map_forest.hpp"
@@ -39,7 +39,7 @@ template <typename T> class recursive_offline_rmq_solver {
 public:
   template <typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
   recursive_offline_rmq_solver(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat, t_query_inp_iter p_start_q,
-                        t_query_inp_iter p_finish_q)
+                               t_query_inp_iter p_finish_q)
       : m_map{}, m_dsu{}, m_queries{}, m_ans{} {
     std::size_t i = 0;
     for (; p_start_dat != p_finish_dat; ++p_start_dat) {
@@ -97,12 +97,122 @@ public:
   }
 };
 
+template <typename T> class iterative_offline_rmq_solver {
+  using map_type = cartesian_map<T, bool>;
+  using map_size_type = typename map_type::size_type;
+  using dsu_type = disjoint_map_forest<map_size_type, map_size_type>;
+
+  map_type m_map;
+  dsu_type m_dsu;
+  rmq_query_2d_vec m_queries;
+  std::vector<std::size_t> m_ans;
+
+public:
+  template <typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
+  iterative_offline_rmq_solver(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat, t_query_inp_iter p_start_q,
+                               t_query_inp_iter p_finish_q)
+      : m_map{}, m_dsu{}, m_queries{}, m_ans{} {
+    std::size_t i = 0;
+    for (; p_start_dat != p_finish_dat; ++p_start_dat) {
+      m_map.append({*p_start_dat, false});
+      m_dsu.make_set(i++, 0);
+    }
+
+    i = 0;
+    for (; p_start_q != p_finish_q; ++p_start_q, ++i) {
+      m_queries[p_start_q->first].push_back({p_start_q->second, i});
+      m_queries[p_start_q->second].push_back({p_start_q->first, i});
+    }
+
+    m_ans.resize(i);
+  }
+
+private:
+  void write_ans_after_subtree_complete(typename map_type::size_type p_curr_index) {
+    auto found = m_queries.find(p_curr_index);
+    if ((found != m_queries.end())) {
+      for (auto its = (found->second).begin(), ite = (found->second).end(); its != ite; ++its) {
+        typename map_type::node_proxy other = m_map.at(its->first);
+        if (other->second) {
+          m_ans[its->second] = *m_dsu.find_set(other.index());
+        }
+      }
+    }
+  }
+
+public:
+  void fill_ans() {
+    typename map_type::node_proxy curr = m_map.root();
+
+    while (curr) {
+      typename map_type::node_proxy left = curr.left(), right = curr.right();
+      const auto curr_index = curr.index();
+      const bool descending = !curr->second;
+
+      // Here we came from curr.parent() and neither left or right child have been visited.
+      if (descending) {
+        curr->second = true;
+        *(m_dsu.find_set(curr_index)) = curr_index;
+
+        if (left) {
+          curr = left;
+        } else if (right) {
+          curr = right;
+        } else {
+          curr = curr.parent();
+          write_ans_after_subtree_complete(curr_index);
+        }
+        continue;
+      }
+
+      // If there's a left node and we are ascending to the root then there are 2 cases.
+      if (left) {
+        // 1. There isn't a right child or it hasn't been visited. Then we've come from curr.left().
+        if (!right || !right->second) {
+          m_dsu.union_set(curr_index, left.index());
+          *(m_dsu.find_set(curr_index)) = curr_index;
+          if (!right) write_ans_after_subtree_complete(curr_index);
+          curr = (right ? right : curr.parent());
+          continue;
+        }
+        // 2. There is a right child and it has been visited. Then we just came from it and need to continue traversing
+        // to the root.
+        m_dsu.union_set(curr_index, right.index());
+        *(m_dsu.find_set(curr_index)) = curr_index;
+        write_ans_after_subtree_complete(curr_index);
+        curr = curr.parent();
+      }
+
+      // There is no left child but the right one has already been traversed, because otherwise this block of code
+      // wouldn't be reached.
+      else {
+        m_dsu.union_set(curr_index, right.index());
+        *(m_dsu.find_set(curr_index)) = curr_index;
+        write_ans_after_subtree_complete(curr_index);
+        curr = curr.parent();
+      }
+    }
+  }
+
+  std::vector<std::size_t> get_ans() && {
+    return std::move(m_ans);
+  }
+};
+
 } // namespace detail
 
 template <typename T, typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
-std::vector<std::size_t> offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
-                                     t_query_inp_iter p_start_q, t_query_inp_iter p_finish_q) {
+std::vector<std::size_t> recursive_offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
+                                               t_query_inp_iter p_start_q, t_query_inp_iter p_finish_q) {
   detail::recursive_offline_rmq_solver<T> solver{p_start_dat, p_finish_dat, p_start_q, p_finish_q};
+  solver.fill_ans();
+  return std::move(solver).get_ans();
+}
+
+template <typename T, typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
+std::vector<std::size_t> iterative_offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
+                                               t_query_inp_iter p_start_q, t_query_inp_iter p_finish_q) {
+  detail::iterative_offline_rmq_solver<T> solver{p_start_dat, p_finish_dat, p_start_q, p_finish_q};
   solver.fill_ans();
   return std::move(solver).get_ans();
 }

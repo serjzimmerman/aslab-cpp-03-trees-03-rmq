@@ -57,9 +57,9 @@ public:
     friend class cartesian_map;
     using size_type = cartesian_map::size_type;
 
-    cartesian_map &m_tree;
+    cartesian_map *m_tree;
     size_type m_curr_index;
-    const node_type &m_curr_node;
+    const node_type *m_curr_node;
 
     using value_type = std::pair<const key_type, mapped_type>;
     using reference = std::pair<const key_type &, mapped_type &>;
@@ -71,8 +71,8 @@ public:
       }
     };
 
-    node_proxy(cartesian_map &p_tree, size_type p_index = 0)
-        : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{m_tree.at_index(m_curr_index)} {}
+    node_proxy(cartesian_map *p_tree, size_type p_index = 0)
+        : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{&m_tree->at_index(m_curr_index)} {}
 
   public:
     size_type index() const {
@@ -80,15 +80,15 @@ public:
     }
 
     node_proxy left() const {
-      return node_proxy{m_tree, m_curr_node.m_left};
+      return node_proxy{m_tree, m_curr_node->m_left};
     }
 
     node_proxy right() const {
-      return node_proxy{m_tree, m_curr_node.m_right};
+      return node_proxy{m_tree, m_curr_node->m_right};
     }
 
     node_proxy parent() const {
-      return node_proxy{m_tree, m_curr_node.m_parent};
+      return node_proxy{m_tree, m_curr_node->m_parent};
     }
 
     bool valid() const {
@@ -100,12 +100,12 @@ public:
     }
 
     reference operator*() const {
-      auto &val = m_tree.value(m_curr_index);
+      auto &val = m_tree->value(m_curr_index);
       return {val.first, val.second};
     }
 
     pointer operator->() {
-      auto &val = m_tree.value(m_curr_index);
+      auto &val = m_tree->value(m_curr_index);
       return {{val.first, val.second}};
     }
 
@@ -122,9 +122,9 @@ public:
     friend class cartesian_map;
     using size_type = cartesian_map::size_type;
 
-    const cartesian_map &m_tree;
+    const cartesian_map *m_tree;
     size_type m_curr_index;
-    const node_type &m_curr_node;
+    const node_type *m_curr_node;
 
     using value_type = std::pair<const key_type, const mapped_type>;
     using reference = std::pair<const key_type &, const mapped_type &>;
@@ -136,8 +136,8 @@ public:
       }
     };
 
-    const_node_proxy(const cartesian_map &p_tree, size_type p_index = 0)
-        : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{m_tree.at_index(m_curr_index)} {}
+    const_node_proxy(const cartesian_map *p_tree, size_type p_index = 0)
+        : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{&m_tree->at_index(m_curr_index)} {}
 
   public:
     size_type index() const {
@@ -145,15 +145,15 @@ public:
     }
 
     const_node_proxy left() const {
-      return {m_tree, m_curr_node.m_left};
+      return {m_tree, m_curr_node->m_left};
     }
 
     const_node_proxy right() const {
-      return {m_tree, m_curr_node.m_right};
+      return {m_tree, m_curr_node->m_right};
     }
 
     const_node_proxy parent() const {
-      return {m_tree, m_curr_node.m_parent};
+      return {m_tree, m_curr_node->m_parent};
     }
 
     bool valid() const {
@@ -165,12 +165,12 @@ public:
     }
 
     reference operator*() const {
-      auto &val = m_tree.value(m_curr_index);
+      auto &val = m_tree->value(m_curr_index);
       return {val.first, val.second};
     }
 
     pointer operator->() {
-      auto &val = m_tree.value(m_curr_index);
+      auto &val = m_tree->value(m_curr_index);
       return {{val.first, val.second}};
     }
 
@@ -184,19 +184,19 @@ public:
   };
 
   node_proxy at(size_type p_index) {
-    return {*this, p_index + 1};
+    return {this, p_index + 1};
   }
 
   const_node_proxy at(size_type p_index) const {
-    return {*this, p_index + 1};
+    return {this, p_index + 1};
   }
 
   node_proxy root() {
-    return {*this, this->m_root};
+    return {this, this->m_root};
   }
 
   const_node_proxy root() const {
-    return {*this, this->m_root};
+    return {this, this->m_root};
   }
 };
 
