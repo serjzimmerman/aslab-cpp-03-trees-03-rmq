@@ -5,5 +5,6 @@ if(Boost_FOUND)
 endif()
 
 add_subdirectory(rmq-queries)
+add_subdirectory(benchmark)
 
 enable_testing()
