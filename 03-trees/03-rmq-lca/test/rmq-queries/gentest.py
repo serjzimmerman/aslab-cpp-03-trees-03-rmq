@@ -20,6 +20,7 @@ def generate_ans(p_items: list, p_req: list) -> list:
         ans.append(p_items[np.argmin(p_items[req[0]:(req[1] + 1)]) + req[0]])
     return ans
 
+
 def save_test(output_path: str, p_items: list, p_req: list, p_idx: int, p_test_fmt: str = 'test{}.dat', p_ans_fmt: str = 'test{}.dat.ans') -> None:
     test_string = '{} '.format(len(p_items))
     np.random.shuffle(p_items)
@@ -32,14 +33,15 @@ def save_test(output_path: str, p_items: list, p_req: list, p_idx: int, p_test_f
 
     with open(os.path.join(output_path, p_test_fmt.format(p_idx)), 'w') as test_fp:
         test_fp.write(test_string)
-    
+
     ans = generate_ans(p_items, p_req)
     ans_string = ''
     for k in ans:
         ans_string += '{} '.format(k)
-    
+
     with open(os.path.join(output_path, p_ans_fmt.format(p_idx)), 'w') as test_fp:
         test_fp.write(ans_string)
+
 
 def generate_request(p_list: np.array, p_config: dict) -> list:
     length = np.random.default_rng().integers(
@@ -64,8 +66,8 @@ def generate_normal(p_config: dict, p_old_idx: int, p_test_fmt: str = 'normal{}.
     length = normal_dict['length']
 
     for i in range(normal_dict['number']):
-        sample = list(set(
-            map(int, (np.random.default_rng().normal(mean, deviation, length)))))
+        sample = list(
+            map(int, (np.random.default_rng().normal(mean, deviation, length))))
         sample.sort()
         requests = generate_request(sample, normal_dict['requests'])
         save_test(p_config['output_path'], sample, requests,
@@ -83,8 +85,8 @@ def generate_uniform(p_config: dict, p_old_idx: int, p_test_fmt: str = 'uniform{
     length = uniform_dict['length']
 
     for i in range(uniform_dict['number']):
-        sample = list(set(
-            map(int, np.random.default_rng().integers(lower, upper, length))))
+        sample = list(
+            map(int, np.random.default_rng().integers(lower, upper, length)))
         sample.sort()
 
         requests = generate_request(sample, uniform_dict['requests'])
@@ -104,8 +106,8 @@ def generate_triangle(p_config: dict, p_old_idx: int, p_test_fmt: str = 'triangl
     length = triangle_dict['length']
 
     for i in range(triangle_dict['number']):
-        sample = list(set(
-            map(int, np.random.default_rng().triangular(left=left, right=right, mode=mode, size=length))))
+        sample = list(
+            map(int, np.random.default_rng().triangular(left=left, right=right, mode=mode, size=length)))
         sample.sort()
 
         requests = generate_request(sample, triangle_dict['requests'])

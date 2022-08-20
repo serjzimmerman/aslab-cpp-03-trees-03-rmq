@@ -24,7 +24,7 @@
     "number": 1,
     "lower": 0,
     "upper": 16777216,
-    "length": 1048576,
+    "length": 8388608,
     "requests": {
       "lower": 1024,
       "upper": 8192
