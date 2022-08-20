@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-#include "cartesian_map.hpp"
+#include "cartesian_set.hpp"
 #include "indexed_disjoint_map.hpp"
 
 namespace throttle {
@@ -28,25 +28,37 @@ using rmq_query_2d_vec = std::unordered_map<unsigned, std::vector<std::pair<unsi
 
 template <typename T> class offline_rmq_solver_base {
 protected:
-  using map_type = cartesian_map<T, bool>;
+  using map_type = cartesian_set<T>;
   using map_size_type = typename map_type::size_type;
   using dsu_type = indexed_disjoint_map<map_size_type>;
-
-  map_type m_map;
-  dsu_type m_dsu;
-  rmq_query_2d_vec m_queries;
+  
+  map_type m_map; // Cartesian map.
+  dsu_type m_dsu; // Disjoint set.
+  rmq_query_2d_vec m_queries; 
   std::vector<unsigned> m_ans;
+
+  std::vector<bool> m_visited; // Array for visited flags.
+
+  bool visited(const typename map_type::node_proxy& p_node) const {
+    return m_visited.at(p_node.index());
+  }
+
+  void set_visited(const typename map_type::node_proxy& p_node) {
+    m_visited.at(p_node.index()) = true;
+  }
 
   template <typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
   offline_rmq_solver_base(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat, t_query_inp_iter p_start_q,
                           t_query_inp_iter p_finish_q)
       : m_map{}, m_dsu{}, m_queries{}, m_ans{} {
-    for (; p_start_dat != p_finish_dat; ++p_start_dat) {
-      m_map.append({*p_start_dat, false});
+    unsigned i = 0;
+    for (; p_start_dat != p_finish_dat; ++p_start_dat, ++i) {
+      m_map.append(*p_start_dat);
       m_dsu.append_set(0);
     }
+    m_visited.resize(i, false);
 
-    unsigned i = 0;
+    i = 0;
     for (; p_start_q != p_finish_q; ++p_start_q, ++i) {
       m_queries[p_start_q->first].push_back({p_start_q->second, i});
       m_queries[p_start_q->second].push_back({p_start_q->first, i});
@@ -60,7 +72,7 @@ protected:
     if ((found != m_queries.end())) {
       for (auto its = (found->second).begin(), ite = (found->second).end(); its != ite; ++its) {
         typename map_type::node_proxy other = m_map.at(its->first);
-        if (other->second) {
+        if (visited(other)) {
           m_ans[its->second] = *m_dsu.find_set(other.index());
         }
       }
@@ -88,7 +100,7 @@ public:
 
 private:
   void fill_ans_helper(typename map_type::node_proxy p_node) {
-    p_node->second = true; // Visited
+    this->set_visited(p_node); // Visited
     const auto curr_index = p_node.index();
     *(this->m_dsu.find_set(curr_index)) = curr_index;
 
@@ -135,11 +147,11 @@ public:
     while (curr) {
       typename map_type::node_proxy left = curr.left(), right = curr.right();
       const auto curr_index = curr.index();
-      const bool descending = !curr->second;
+      const bool descending = !this->visited(curr);
 
       // Here we came from curr.parent() and neither left or right child have been visited.
       if (descending) {
-        curr->second = true;
+        this->set_visited(curr);
         *(this->m_dsu.find_set(curr_index)) = curr_index;
 
         if (left) {
@@ -156,7 +168,7 @@ public:
       // If there's a left node and we are ascending to the root then there are 2 cases.
       if (left) {
         // 1. There isn't a right child or it hasn't been visited. Then we've come from curr.left().
-        if (!right || !right->second) {
+        if (!right || !this->visited(right)) {
           this->m_dsu.union_set(curr_index, left.index());
           *(this->m_dsu.find_set(curr_index)) = curr_index;
           if (!right) this->write_ans_after_subtree_complete(curr_index);

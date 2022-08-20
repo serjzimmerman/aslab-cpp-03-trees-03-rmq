@@ -47,7 +47,6 @@ protected:
   // appending an element the stack is popped from while traversing to the root.
   std::stack<t_value_type> m_key_stack;
 
-  std::vector<t_value_type> m_key_vec;
   size_type m_rightmost;
   size_type m_root;
 
@@ -59,16 +58,8 @@ protected:
     return m_tree_vec.at(p_index);
   }
 
-  t_value_type &value(size_type p_index) {
-    return m_key_vec.at(p_index - 1);
-  }
-
-  const t_value_type &value(size_type p_index) const {
-    return m_key_vec.at(p_index - 1);
-  }
-
 public:
-  cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_key_vec{}, m_rightmost{0}, m_root{0} {
+  cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_rightmost{0}, m_root{0} {
     m_tree_vec.emplace_back(); // Sentinel value that is used to indicate that there is no parent, left or right node.
                                // It's otherwise unreacheble and contains garbage;
   }
@@ -78,26 +69,15 @@ public:
   }
 
   size_type size() const noexcept {
-    return m_key_vec.size();
+    return m_tree_vec.size() - 1;
   }
 
-private:
-  void insert(const t_value_type &p_key) {
-    m_tree_vec.emplace_back();
-    try {
-      m_key_vec.emplace_back(p_key);
-    } catch (...) {
-      m_tree_vec.pop_back();
-      throw;
-    }
-  }
-
-public:
-  void append(const t_value_type &p_key) {
+protected:
+  void append_impl(const t_value_type &p_key) {
     bool is_empty = empty();
-    insert(p_key);
+    m_tree_vec.emplace_back();
 
-    size_type new_index = m_key_vec.size();
+    size_type new_index = size();
     if (is_empty) {
       m_root = m_rightmost = new_index;
       m_key_stack.push(p_key);

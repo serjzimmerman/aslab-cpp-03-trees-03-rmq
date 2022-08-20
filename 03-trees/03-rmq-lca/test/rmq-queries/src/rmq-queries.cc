@@ -1,7 +1,6 @@
 #include <chrono>
 #include <iostream>
 
-#include "cartesian_map.hpp"
 #include "cartesian_set.hpp"
 
 #include "disjoint_map_forest.hpp"

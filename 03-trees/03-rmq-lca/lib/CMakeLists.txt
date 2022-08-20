@@ -6,8 +6,6 @@ add_library(throttle INTERFACE)
 target_include_directories(throttle INTERFACE include)
 
 set(THROTTLE_TEST
-  test/disjoint_set.cc
-  test/cartesian_tree.cc
   test/main.cc
 )
 

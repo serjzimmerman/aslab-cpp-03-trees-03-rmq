@@ -37,6 +37,10 @@ public:
     }
   }
 
+  void append(const key_type& p_key) {
+    this->append_impl(p_key);
+  }
+
 public:
   class node_proxy {
   private:
