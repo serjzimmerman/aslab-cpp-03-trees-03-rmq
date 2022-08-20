@@ -7,8 +7,11 @@
 #include "disjoint_map_forest.hpp"
 #include "disjoint_set_forest.hpp"
 #include "offline_rmq.hpp"
+#include "indexed_disjoint_map.hpp"
 
 #include <cstdlib>
+
+template class throttle::indexed_disjoint_map<int>;
 
 int main() {
   unsigned n, m;

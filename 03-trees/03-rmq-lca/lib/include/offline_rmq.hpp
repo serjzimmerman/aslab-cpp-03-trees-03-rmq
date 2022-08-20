@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "cartesian_map.hpp"
-#include "disjoint_map_forest.hpp"
+#include "indexed_disjoint_map.hpp"
 
 namespace throttle {
 namespace detail {
@@ -30,7 +30,7 @@ template <typename T> class offline_rmq_solver_base {
 protected:
   using map_type = cartesian_map<T, bool>;
   using map_size_type = typename map_type::size_type;
-  using dsu_type = disjoint_map_forest<map_size_type, map_size_type>;
+  using dsu_type = indexed_disjoint_map<map_size_type>;
 
   map_type m_map;
   dsu_type m_dsu;
@@ -41,13 +41,12 @@ protected:
   offline_rmq_solver_base(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat, t_query_inp_iter p_start_q,
                           t_query_inp_iter p_finish_q)
       : m_map{}, m_dsu{}, m_queries{}, m_ans{} {
-    unsigned i = 0;
     for (; p_start_dat != p_finish_dat; ++p_start_dat) {
       m_map.append({*p_start_dat, false});
-      m_dsu.make_set(i++, 0);
+      m_dsu.append_set(0);
     }
 
-    i = 0;
+    unsigned i = 0;
     for (; p_start_q != p_finish_q; ++p_start_q, ++i) {
       m_queries[p_start_q->first].push_back({p_start_q->second, i});
       m_queries[p_start_q->second].push_back({p_start_q->first, i});

@@ -16,46 +16,37 @@
 #include <utility>
 #include <vector>
 
-#include "disjoint_set_forest.hpp"
+#include "disjoint_map_forest.hpp"
 namespace throttle {
 
-namespace detail {
-template <typename t_value_type> struct disjoint_map_forest_node : public disjoint_set_forest_node {
-  t_value_type m_val;
-
-  disjoint_map_forest_node(size_type p_parent_index, t_value_type p_val)
-      : disjoint_set_forest_node{p_parent_index}, m_val{p_val} {}
-};
-} // namespace detail
-
-template <typename t_key_type, typename t_value_type, typename t_eq = std::equal_to<t_key_type>,
-          typename t_hash = std::hash<t_key_type>>
-class disjoint_map_forest final {
+// This is an optimized version of disjoint map forest without an unordered_map and elements are addressed with the
+// index that they have been inserted at with append_set(). This optimization cuts run time for offline_rmq in half and
+// drastically reduces memory usage.
+template <typename t_value_type> class indexed_disjoint_map final {
   using node_type = typename detail::disjoint_map_forest_node<t_value_type>;
 
 public:
   using value_type = t_value_type;
   using size_type = typename node_type::size_type;
-  using key_type = t_key_type;
+  using key_type = size_type;
 
 private:
-  std::unordered_map<key_type, size_type, t_hash, t_eq> m_key_index_map;
   std::vector<node_type> m_node_vec;
 
 public:
-  disjoint_map_forest() : m_key_index_map{}, m_node_vec{} {}
+  indexed_disjoint_map() : m_node_vec{} {}
 
   class individual_set_proxy {
-    friend class disjoint_map_forest;
+    friend class indexed_disjoint_map;
 
     using pointer = value_type *;
     using reference = value_type &;
 
     size_type m_curr_index;
-    disjoint_map_forest *m_map;
+    indexed_disjoint_map *m_map;
 
   public:
-    individual_set_proxy(size_type m_node, disjoint_map_forest *p_map) : m_curr_index{m_node}, m_map{p_map} {}
+    individual_set_proxy(size_type m_node, indexed_disjoint_map *p_map) : m_curr_index{m_node}, m_map{p_map} {}
     reference operator*() {
       return m_map->at_index(m_curr_index).m_val;
     }
@@ -65,10 +56,9 @@ public:
     }
   };
 
-  void make_set(const key_type &p_key, const value_type &p_val) {
+  void append_set(const value_type &p_val) {
     size_type index = m_node_vec.size();
-    bool inserted = m_key_index_map.emplace(std::make_pair(p_key, index)).second;
-    if (inserted) m_node_vec.emplace_back(index, p_val);
+    m_node_vec.emplace_back(index, p_val);
   }
 
 private:
@@ -98,27 +88,27 @@ private:
   }
 
 public:
-  individual_set_proxy find_set(const key_type &p_key) {
-    return individual_set_proxy{find_set_impl(m_key_index_map.at(p_key)), this};
+  individual_set_proxy find_set(const key_type p_key) {
+    return individual_set_proxy{find_set_impl(p_key), this};
   }
 
-  void union_set(const key_type &p_left, const key_type &p_right) {
-    size_type left = find_set_impl(m_key_index_map.at(p_left)), right = find_set_impl(m_key_index_map.at(p_right));
+  void union_set(const key_type p_left, const key_type p_right) {
+    size_type left = find_set_impl(p_left), right = find_set_impl(p_right);
     if (p_left != p_right) link(left, right);
   }
 
   template <typename t_stream> void dump(t_stream &p_ostream) {
     p_ostream << "digraph {\n";
-    for (const auto &v : m_key_index_map) {
-      p_ostream << "\tnode_" << v.second << " [label = \"" << v.first << ":" << at_index(v.second).m_val << "\"];\n";
-      p_ostream << "\tnode_" << v.second << " -> node_" << at_index(v.second).m_parent_index << ";\n";
+    for (size_type i = 0; i < m_node_vec.size(); ++i) {
+      p_ostream << "\tnode_" << i << " [label = \"" << i << ":" << at_index(i).m_val << "\"];\n";
+      p_ostream << "\tnode_" << i << " -> node_" << at_index(i).m_parent_index << ";\n";
     }
     p_ostream << "}\n";
   }
 };
 
-template <typename t_stream, typename t_value_type, typename t_key_type, typename t_eq, typename t_hash>
-t_stream &operator<<(t_stream &p_ostream, disjoint_map_forest<t_key_type, t_value_type, t_eq, t_hash> &p_set) {
+template <typename t_stream, typename t_value_type>
+t_stream &operator<<(t_stream &p_ostream, indexed_disjoint_map<t_value_type> &p_set) {
   p_set.dump(p_ostream);
   return p_ostream;
 }
