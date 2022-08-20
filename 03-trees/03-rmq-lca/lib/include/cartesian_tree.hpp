@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <stack>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -41,6 +42,11 @@ public:
 
 protected:
   std::vector<node_type> m_tree_vec;
+
+  // The tree only has to keep around just a small number of keys at one time. Specifically the rightmost branch. When
+  // appending an element the stack is popped from while traversing to the root.
+  std::stack<t_value_type> m_key_stack;
+
   std::vector<t_value_type> m_key_vec;
   size_type m_rightmost;
   size_type m_root;
@@ -62,7 +68,7 @@ protected:
   }
 
 public:
-  cartesian_tree() : m_tree_vec{}, m_key_vec{}, m_rightmost{0}, m_root{0} {
+  cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_key_vec{}, m_rightmost{0}, m_root{0} {
     m_tree_vec.emplace_back(); // Sentinel value that is used to indicate that there is no parent, left or right node.
                                // It's otherwise unreacheble and contains garbage;
   }
@@ -94,16 +100,22 @@ public:
     size_type new_index = m_key_vec.size();
     if (is_empty) {
       m_root = m_rightmost = new_index;
+      m_key_stack.push(p_key);
       return;
     }
 
     size_type curr = m_rightmost;
-    bool is_key_less = t_comp{}(p_key, value(curr));
+    bool is_key_less = t_comp{}(p_key, m_key_stack.top());
     while (curr && is_key_less) {
       curr = at_index(curr).m_parent;
-      if (curr) is_key_less = t_comp{}(p_key, value(curr));
+      if (curr) {
+        m_key_stack.pop();
+        auto val = m_key_stack.top();
+        is_key_less = t_comp{}(p_key, val);
+      }
     }
 
+    m_key_stack.push(p_key);
     m_rightmost = new_index;
     node_type &rightmost_node = m_tree_vec.back();
     if (!curr) {

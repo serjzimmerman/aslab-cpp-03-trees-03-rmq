@@ -47,10 +47,6 @@ public:
     size_type m_curr_index;
     const node_type *m_curr_node;
 
-    using value_type = key_type;
-    using reference = const key_type &;
-    using pointer = const key_type *;
-
     node_proxy(const cartesian_set *p_tree, size_type p_index = 0)
         : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{&m_tree->at_index(m_curr_index)} {}
 
@@ -77,14 +73,6 @@ public:
 
     operator bool() const {
       return valid();
-    }
-
-    reference operator*() const {
-      return m_tree->value(m_curr_index);
-    }
-
-    pointer operator->() const {
-      return &m_tree->value(m_curr_index);
     }
 
     bool operator==(const node_proxy &p_rhs) const {
