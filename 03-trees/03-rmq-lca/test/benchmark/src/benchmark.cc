@@ -55,6 +55,10 @@ int main() {
   auto iterative_finish = std::chrono::high_resolution_clock::now();
   auto iterative_elapsed = std::chrono::duration<double, std::milli>(iterative_finish - iterative_start);
 
+#if COMPARE_OUTPUTS
+  std::cout << "Outputs of throttle::recursive_offline_rmq and throttle::iterative_offline_rmq " << (ans_rec == ans_iter ? "match\n" : "differ\n");
+#endif
+
   std::cout << "throttle::recursive_offline_rmq took " << recursive_elapsed.count() << "ms to run\n";
-  std::cout << "throttle::iterative_offline_rmq " << iterative_elapsed.count() << "ms to run\n"; 
+  std::cout << "throttle::iterative_offline_rmq " << iterative_elapsed.count() << "ms to run\n";
 }
