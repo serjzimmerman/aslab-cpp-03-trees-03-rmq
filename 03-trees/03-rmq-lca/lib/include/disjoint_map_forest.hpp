@@ -20,7 +20,7 @@ namespace throttle {
 
 namespace detail {
 template <typename t_value_type> struct disjoint_map_forest_node {
-  using size_type = std::size_t;
+  using size_type = unsigned;
 
   t_value_type m_val;
   size_type m_parent_index;

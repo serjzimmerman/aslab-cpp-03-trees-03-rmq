@@ -23,8 +23,8 @@
 namespace throttle {
 namespace detail {
 
-using rmq_query = std::pair<std::size_t, std::size_t>;
-using rmq_query_2d_vec = std::unordered_map<std::size_t, std::vector<std::pair<std::size_t, std::size_t>>>;
+using rmq_query = std::pair<unsigned, unsigned>;
+using rmq_query_2d_vec = std::unordered_map<unsigned, std::vector<std::pair<unsigned, unsigned>>>;
 
 template <typename T> class offline_rmq_solver_base {
 protected:
@@ -35,13 +35,13 @@ protected:
   map_type m_map;
   dsu_type m_dsu;
   rmq_query_2d_vec m_queries;
-  std::vector<std::size_t> m_ans;
+  std::vector<unsigned> m_ans;
 
   template <typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
   offline_rmq_solver_base(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat, t_query_inp_iter p_start_q,
                           t_query_inp_iter p_finish_q)
       : m_map{}, m_dsu{}, m_queries{}, m_ans{} {
-    std::size_t i = 0;
+    unsigned i = 0;
     for (; p_start_dat != p_finish_dat; ++p_start_dat) {
       m_map.append({*p_start_dat, false});
       m_dsu.make_set(i++, 0);
@@ -69,7 +69,7 @@ protected:
   }
 
 public:
-  std::vector<std::size_t> get_ans() && {
+  std::vector<unsigned> get_ans() && {
     return std::move(m_ans);
   }
 };
@@ -187,7 +187,7 @@ public:
 } // namespace detail
 
 template <typename T, typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
-std::vector<std::size_t> recursive_offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
+std::vector<unsigned> recursive_offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
                                                t_query_inp_iter p_start_q, t_query_inp_iter p_finish_q) {
   detail::recursive_offline_rmq_solver<T> solver{p_start_dat, p_finish_dat, p_start_q, p_finish_q};
   solver.fill_ans();
@@ -195,7 +195,7 @@ std::vector<std::size_t> recursive_offline_rmq(t_data_inp_iter p_start_dat, t_da
 }
 
 template <typename T, typename t_data_inp_iter, typename t_query_inp_iter, typename t_comp = std::less<T>>
-std::vector<std::size_t> iterative_offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
+std::vector<unsigned> iterative_offline_rmq(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat,
                                                t_query_inp_iter p_start_q, t_query_inp_iter p_finish_q) {
   detail::iterative_offline_rmq_solver<T> solver{p_start_dat, p_finish_dat, p_start_q, p_finish_q};
   solver.fill_ans();

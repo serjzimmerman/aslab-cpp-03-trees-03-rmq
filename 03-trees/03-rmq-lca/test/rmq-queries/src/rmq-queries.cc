@@ -8,17 +8,10 @@
 #include "disjoint_set_forest.hpp"
 #include "offline_rmq.hpp"
 
-#if 1
-template class throttle::cartesian_set<int>;
-template class throttle::cartesian_map<int, bool>;
-template class throttle::disjoint_map_forest<int, int>;
-template class throttle::disjoint_set_forest<int>;
-#endif
-
 #include <cstdlib>
 
 int main() {
-  std::size_t n, m;
+  unsigned n, m;
   if (!(std::cin >> n)) {
     std::cout << "Invalid input\n";
     return 1;
@@ -27,7 +20,7 @@ int main() {
   std::vector<int> vec{};
   vec.reserve(n);
 
-  for (std::size_t i = 0; i < n; ++i) {
+  for (unsigned i = 0; i < n; ++i) {
     int temp;
     if (!(std::cin >> temp)) {
       std::cout << "Invalid input\n";
@@ -42,9 +35,9 @@ int main() {
   }
 
   size_t max_index = vec.size() - 1;
-  std::vector<std::pair<std::size_t, std::size_t>> q_vec{};
-  for (std::size_t i = 0; i < m; ++i) {
-    std::size_t left, right;
+  std::vector<std::pair<unsigned, unsigned>> q_vec{};
+  for (unsigned i = 0; i < m; ++i) {
+    unsigned left, right;
     if (!(std::cin >> left >> right) || (left >= right) || (left > max_index) || (right > max_index)) {
       std::cout << "Invalid input\n";
       return 1;

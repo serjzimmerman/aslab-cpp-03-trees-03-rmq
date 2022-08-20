@@ -20,7 +20,7 @@ namespace throttle {
 
 namespace detail {
 struct cartesian_tree_node {
-  using size_type = std::size_t;
+  using size_type = unsigned;
 
   size_type m_parent;
   size_type m_left;

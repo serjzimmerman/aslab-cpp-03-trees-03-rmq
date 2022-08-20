@@ -20,7 +20,7 @@ namespace throttle {
 
 namespace detail {
 struct disjoint_set_forest_node {
-  using size_type = std::size_t;
+  using size_type = unsigned;
   size_type m_parent_index;
   size_type m_rank;
 
