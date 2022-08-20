@@ -12,6 +12,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <stack>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -32,9 +33,10 @@ public:
 
 private:
   std::vector<node_type> m_node_vec;
+  std::stack<size_type> m_path_stack;
 
 public:
-  indexed_disjoint_map() : m_node_vec{} {}
+  indexed_disjoint_map() : m_node_vec{}, m_path_stack{} {}
 
   class individual_set_proxy {
     friend class indexed_disjoint_map;
@@ -71,8 +73,25 @@ private:
   }
 
   size_type find_set_impl(size_type p_node) {
+#ifndef RECURSIVE_FIND_SET
+    size_type &parent = parent_index(p_node);
+
+    while (parent != p_node) {
+      m_path_stack.push(p_node);
+      p_node = parent;
+      parent = parent_index(p_node);
+    }
+
+    while (!m_path_stack.empty()) {
+      parent_index(m_path_stack.top()) = p_node;
+      m_path_stack.pop();
+    }
+
+#else
     size_type &parent = parent_index(p_node);
     if (parent != p_node) parent = find_set_impl(parent);
+#endif
+
     return parent;
   }
 
