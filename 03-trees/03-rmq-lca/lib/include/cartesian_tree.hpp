@@ -8,6 +8,16 @@
  * ----------------------------------------------------------------------------
  */
 
+/* This file contains implementation of base class for Cartesian tree. It's derived from in cartesian_set.hpp to
+ * implement a sort of set with pseudoiterators for traversing the tree. Append method constructs the tree in iterative
+ * manner with O(n) complexity. This tree preserves the inorder traversal to be same as the order that elements have
+ * been appended, but it doesn't actually store all the keys, as that's a huge memory overhead. All that is needed to
+ * construct the tree is a stack for the rightmost branch (path that is taken from rightmost element to the root). When
+ * an element is appended, this branch is traversed upwards while popping the keys from the stack until an element less
+ * than inserted key is found. Then the branches are "rotated" to preserve Cartesian tree property.
+ * 
+ */
+
 #pragma once
 
 #include <cstddef>
@@ -61,7 +71,7 @@ protected:
 public:
   cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_rightmost{0}, m_root{0} {
     m_tree_vec.emplace_back(); // Sentinel value that is used to indicate that there is no parent, left or right node.
-                               // It's otherwise unreacheble and contains garbage;
+                               // It's otherwise unreachable and contains garbage;
   }
 
   bool empty() const noexcept {

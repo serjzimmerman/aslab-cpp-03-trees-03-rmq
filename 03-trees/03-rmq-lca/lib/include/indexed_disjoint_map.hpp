@@ -8,6 +8,12 @@
  * ----------------------------------------------------------------------------
  */
 
+/* This is an optimized version of disjoint map forest without an unordered_map and elements are addressed with the
+ * index that they have been inserted at with append_set(). This optimization cuts run time for offline_rmq in half and
+ * drastically reduces memory usage.
+ *
+ */
+
 #pragma once
 
 #include <cstddef>
@@ -20,9 +26,6 @@
 #include "disjoint_map_forest.hpp"
 namespace throttle {
 
-// This is an optimized version of disjoint map forest without an unordered_map and elements are addressed with the
-// index that they have been inserted at with append_set(). This optimization cuts run time for offline_rmq in half and
-// drastically reduces memory usage.
 template <typename t_value_type> class indexed_disjoint_map final {
   using node_type = typename detail::disjoint_map_forest_node<t_value_type>;
 

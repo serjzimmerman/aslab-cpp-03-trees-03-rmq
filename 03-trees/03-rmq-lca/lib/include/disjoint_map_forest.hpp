@@ -8,6 +8,12 @@
  * ----------------------------------------------------------------------------
  */
 
+/* NOTE[]: This file is not used for offline RMQ.
+ * This file contains a general-purpose Disjoint Set Union structure with a mapped type. Find_set algorithm
+ * implements recursive (or iterative) path compression and union by rank.
+ *
+ */
+
 #pragma once
 
 #include <cstddef>

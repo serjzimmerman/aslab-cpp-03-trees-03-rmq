@@ -8,6 +8,11 @@
  * ----------------------------------------------------------------------------
  */
 
+/* Cartesian set extends cartesian_tree.hpp and adds a proxy class for traversing tree tree. It provides 3 methods:
+ * left(), right() and parent(). There is no way to get the key of a node.
+ *
+ */
+
 #pragma once
 
 #include <cstddef>
@@ -37,7 +42,7 @@ public:
     }
   }
 
-  void append(const key_type& p_key) {
+  void append(const key_type &p_key) {
     this->append_impl(p_key);
   }
 

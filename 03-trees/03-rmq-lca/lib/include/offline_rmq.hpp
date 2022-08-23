@@ -8,6 +8,14 @@
  * ----------------------------------------------------------------------------
  */
 
+/* This file contains two versions of Offline LCA algorithm in application to solving RMQ in bulk: recursive and iterative. Recursive algorithm is left there for reference. 
+ * RMQ is solved using following steps: 
+ * 1. Reduce RMQ to LCA by constructing a Cartesian Tree.
+ * 2. Traverse the tree in DFS (more similar to Euler tour). During traversal an additional array of visited flags is maintained.
+ * 3. Apply Tarjan's algorithm using a Disjoint Set Union.
+ *
+ */
+
 #pragma once
 
 #include <cstddef>

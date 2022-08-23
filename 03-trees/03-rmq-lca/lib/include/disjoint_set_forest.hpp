@@ -8,6 +8,13 @@
  * ----------------------------------------------------------------------------
  */
 
+/* NOTE[]: This file is not used for offline RMQ.
+ * This file contains a general-purpose Disjoint Set Union structure without a mapped type. Find_set algorithm
+ * implements recursive (or iterative) path compression and union by rank. A unordered_map is used to map keys to the
+ * corresponding indexes in the underlying std::vector.
+ *
+ */
+
 #pragma once
 
 #include <cstddef>
