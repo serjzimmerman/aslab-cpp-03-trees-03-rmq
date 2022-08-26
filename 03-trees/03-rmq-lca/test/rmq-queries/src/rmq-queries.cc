@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
   }
 
   auto start = std::chrono::high_resolution_clock::now();
-  auto ans = throttle::iterative_offline_rmq<int>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
+  auto ans = throttle::iterative_offline_rmq<int, std::less<int>>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
   auto finish = std::chrono::high_resolution_clock::now();
   auto elapsed = std::chrono::duration<double, std::milli>(finish - start);
 
