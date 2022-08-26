@@ -103,30 +103,30 @@ public:
 
 private:
   void fill_ans_helper(typename map_type::node_proxy p_node) {
-    this->set_visited(p_node); // Visited
+    base::set_visited(p_node); // Visited
     const auto curr_index = p_node.index();
-    *(this->m_dsu.find_set(curr_index)) = curr_index;
+    *(base::m_dsu.find_set(curr_index)) = curr_index;
 
     typename map_type::node_proxy left = p_node.left(), right = p_node.right();
 
     if (left) {
       fill_ans_helper(left);
-      this->m_dsu.union_set(curr_index, left.index());
-      *(this->m_dsu.find_set(curr_index)) = curr_index;
+      base::m_dsu.union_set(curr_index, left.index());
+      *(base::m_dsu.find_set(curr_index)) = curr_index;
     }
 
     if (right) {
       fill_ans_helper(right);
-      this->m_dsu.union_set(curr_index, right.index());
-      *(this->m_dsu.find_set(curr_index)) = curr_index;
+      base::m_dsu.union_set(curr_index, right.index());
+      *(base::m_dsu.find_set(curr_index)) = curr_index;
     }
 
-    this->write_ans_after_subtree_complete(curr_index);
+    base::write_ans_after_subtree_complete(curr_index);
   }
 
 public:
   void fill_ans() {
-    fill_ans_helper(this->m_map.root());
+    fill_ans_helper(base::m_map.root());
   }
 };
 
@@ -146,17 +146,17 @@ public:
 
 public:
   void fill_ans() {
-    typename map_type::node_proxy curr = this->m_map.root();
+    typename map_type::node_proxy curr = base::m_map.root();
 
     while (curr) {
       typename map_type::node_proxy left = curr.left(), right = curr.right();
       const auto curr_index = curr.index();
-      const bool descending = !this->visited(curr);
+      const bool descending = !base::visited(curr);
 
       // Here we came from curr.parent() and neither left or right child have been visited.
       if (descending) {
-        this->set_visited(curr);
-        *(this->m_dsu.find_set(curr_index)) = curr_index;
+        base::set_visited(curr);
+        *(base::m_dsu.find_set(curr_index)) = curr_index;
 
         if (left) {
           curr = left;
@@ -164,7 +164,7 @@ public:
           curr = right;
         } else {
           curr = curr.parent();
-          this->write_ans_after_subtree_complete(curr_index);
+          base::write_ans_after_subtree_complete(curr_index);
         }
         continue;
       }
@@ -172,27 +172,27 @@ public:
       // If there's a left node and we are ascending to the root then there are 2 cases.
       if (left) {
         // 1. There isn't a right child or it hasn't been visited. Then we've come from curr.left().
-        if (!right || !this->visited(right)) {
-          this->m_dsu.union_set(curr_index, left.index());
-          *(this->m_dsu.find_set(curr_index)) = curr_index;
-          if (!right) this->write_ans_after_subtree_complete(curr_index);
+        if (!right || !base::visited(right)) {
+          base::m_dsu.union_set(curr_index, left.index());
+          *(base::m_dsu.find_set(curr_index)) = curr_index;
+          if (!right) base::write_ans_after_subtree_complete(curr_index);
           curr = (right ? right : curr.parent());
           continue;
         }
         // 2. There is a right child and it has been visited. Then we just came from it and need to continue traversing
         // to the root.
-        this->m_dsu.union_set(curr_index, right.index());
-        *(this->m_dsu.find_set(curr_index)) = curr_index;
-        this->write_ans_after_subtree_complete(curr_index);
+        base::m_dsu.union_set(curr_index, right.index());
+        *(base::m_dsu.find_set(curr_index)) = curr_index;
+        base::write_ans_after_subtree_complete(curr_index);
         curr = curr.parent();
       }
 
       // There is no left child but the right one has already been traversed, because otherwise this block of code
       // wouldn't be reached.
       else {
-        this->m_dsu.union_set(curr_index, right.index());
-        *(this->m_dsu.find_set(curr_index)) = curr_index;
-        this->write_ans_after_subtree_complete(curr_index);
+        base::m_dsu.union_set(curr_index, right.index());
+        *(base::m_dsu.find_set(curr_index)) = curr_index;
+        base::write_ans_after_subtree_complete(curr_index);
         curr = curr.parent();
       }
     }

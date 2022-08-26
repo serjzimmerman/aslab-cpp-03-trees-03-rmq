@@ -43,7 +43,7 @@ private:
   std::vector<node_type> m_node_vec;
 
 public:
-  disjoint_map_forest() : m_key_index_map{}, m_node_vec{} {}
+  disjoint_map_forest() = default;
 
   class individual_set_proxy {
     friend class disjoint_map_forest;
@@ -107,7 +107,7 @@ public:
     if (p_left != p_right) link(left, right);
   }
 
-  template <typename t_stream> void dump(t_stream &p_ostream) {
+  template <typename t_stream> void dump(t_stream &p_ostream) const {
     p_ostream << "digraph {\n";
     for (const auto &v : m_key_index_map) {
       p_ostream << "\tnode_" << v.second << " [label = \"" << v.first << ":" << at_index(v.second).m_val << "\"];\n";

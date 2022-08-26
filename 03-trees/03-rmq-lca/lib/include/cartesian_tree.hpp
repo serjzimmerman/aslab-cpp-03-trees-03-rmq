@@ -50,6 +50,8 @@ protected:
   size_type m_rightmost;
   size_type m_root;
 
+  t_comp m_comp;
+
   node_type &at_index(size_type p_index) {
     return m_tree_vec.at(p_index);
   }
@@ -59,16 +61,16 @@ protected:
   }
 
 public:
-  cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_rightmost{0}, m_root{0} {
+  cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_rightmost{0}, m_root{0}, m_comp{} {
     m_tree_vec.emplace_back(); // Sentinel value that is used to indicate that there is no parent, left or right node.
                                // It's otherwise unreacheble and contains garbage;
   }
 
-  bool empty() const noexcept {
+  bool empty() const {
     return !size();
   }
 
-  size_type size() const noexcept {
+  size_type size() const {
     return m_tree_vec.size() - 1;
   }
 
@@ -85,13 +87,13 @@ protected:
     }
 
     size_type curr = m_rightmost;
-    bool is_key_less = t_comp{}(p_key, m_key_stack.top());
+    bool is_key_less = m_comp(p_key, m_key_stack.top());
     while (curr && is_key_less) {
       curr = at_index(curr).m_parent;
       if (curr) {
         m_key_stack.pop();
         auto val = m_key_stack.top();
-        is_key_less = t_comp{}(p_key, val);
+        is_key_less = m_comp(p_key, val);
       }
     }
 
@@ -111,11 +113,12 @@ protected:
     curr_node.m_right = m_rightmost;
     rightmost_node.m_parent = curr;
   }
-#if 0
+
+public:
   template <typename t_stream> void dump(t_stream &p_ostream) const {
     p_ostream << "digraph {\n";
     for (size_type i = 1; i < m_tree_vec.size(); ++i) {
-      p_ostream << "\tnode_" << i << " [label = \"" << value(i) << "\"];\n";
+      p_ostream << "\tnode_" << i << " [label = \"" << i << "\"];\n";
       const node_type &node = at_index(i);
 
       if (node.m_left) {
@@ -134,15 +137,13 @@ protected:
     }
     p_ostream << "}\n";
   }
-#endif
+
 };
 
-#if 0
 template <typename t_stream, typename t_value_type, typename t_comp>
 t_stream &operator<<(t_stream &p_ostream, cartesian_tree<t_value_type, t_comp> &p_tree) {
   p_tree.dump(p_ostream);
   return p_ostream;
 }
-#endif
 
 } // namespace throttle

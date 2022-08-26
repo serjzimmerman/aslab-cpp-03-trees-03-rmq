@@ -13,7 +13,7 @@
 int main() {
   unsigned n, m;
   if (!(std::cin >> n)) {
-    std::cout << "Invalid input\n";
+    std::cout << "Can't read number of elements \"n\"\n";
     return 1;
   }
 
@@ -23,14 +23,14 @@ int main() {
   for (unsigned i = 0; i < n; ++i) {
     int temp;
     if (!(std::cin >> temp)) {
-      std::cout << "Invalid input\n";
+      std::cout << "Can't read element at index " << i << " out of " << n << "\n";
       return 1;
     }
     vec.push_back(temp);
   }
 
   if (!(std::cin >> m)) {
-    std::cout << "Invalid input\n";
+    std::cout << "Can't read number of queries \"m\"\n";
     return 1;
   }
 
@@ -38,8 +38,11 @@ int main() {
   std::vector<std::pair<unsigned, unsigned>> q_vec{};
   for (unsigned i = 0; i < m; ++i) {
     unsigned left, right;
-    if (!(std::cin >> left >> right) || (left >= right) || (left > max_index) || (right > max_index)) {
-      std::cout << "Invalid input\n";
+    if (!(std::cin >> left >> right)) {
+      std::cout << "Can't read query at index " << i << " out of " << m << "\n";
+    }
+    if ((left >= right) || (left > max_index) || (right > max_index)) {
+      std::cout << "[" << left << ", " << right << "] in not a valid range in array of size " << n << "\n";
       return 1;
     }
     q_vec.push_back({left, right});
@@ -50,5 +53,6 @@ int main() {
   for (const auto &v : ans) {
     std::cout << vec.at(v) << " ";
   }
+
   std::cout << "\n";
 }

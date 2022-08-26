@@ -34,7 +34,7 @@ private:
   std::vector<node_type> m_node_vec;
 
 public:
-  indexed_disjoint_map() : m_node_vec{} {}
+  indexed_disjoint_map() = default;
 
   class individual_set_proxy {
     friend class indexed_disjoint_map;
