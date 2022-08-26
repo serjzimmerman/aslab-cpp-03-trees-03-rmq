@@ -34,16 +34,16 @@ public:
   using typename base::size_type;
   using typename base::value_type;
 
-  cartesian_set() : base{} {}
+  cartesian_set() = default;
 
-  template <typename t_inp_iter> cartesian_set(t_inp_iter start, t_inp_iter finish) : cartesian_set{} {
+  template <typename t_inp_iter> cartesian_set(t_inp_iter start, t_inp_iter finish) {
     for (; start != finish; ++start) {
-      this->append(*start);
+      append(*start);
     }
   }
 
-  void append(const key_type &p_key) {
-    this->append_impl(p_key);
+  void append(const key_type& p_key) {
+    base::append_impl(p_key);
   }
 
 public:
@@ -98,7 +98,7 @@ public:
   }
 
   node_proxy root() const {
-    return node_proxy(this, this->m_root);
+    return node_proxy(this, base::m_root);
   }
 };
 

@@ -43,17 +43,20 @@ int main() {
   }
 
   auto recursive_start = std::chrono::high_resolution_clock::now();
-  auto &&ans_rec = throttle::recursive_offline_rmq<int>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
+  auto &&ans_rec =
+      throttle::recursive_offline_rmq<int, std::less<int>>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
   auto recursive_finish = std::chrono::high_resolution_clock::now();
   auto recursive_elapsed = std::chrono::duration<double, std::milli>(recursive_finish - recursive_start);
 
   auto iterative_start = std::chrono::high_resolution_clock::now();
-  auto &&ans_iter = throttle::iterative_offline_rmq<int>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
+  auto &&ans_iter =
+      throttle::iterative_offline_rmq<int, std::less<int>>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
   auto iterative_finish = std::chrono::high_resolution_clock::now();
   auto iterative_elapsed = std::chrono::duration<double, std::milli>(iterative_finish - iterative_start);
 
 #if COMPARE_OUTPUTS
-  std::cout << "Outputs of throttle::recursive_offline_rmq and throttle::iterative_offline_rmq " << (ans_rec == ans_iter ? "match\n" : "differ\n");
+  std::cout << "Outputs of throttle::recursive_offline_rmq and throttle::iterative_offline_rmq "
+            << (ans_rec == ans_iter ? "match\n" : "differ\n");
 #endif
 
   std::cout << "throttle::recursive_offline_rmq took " << recursive_elapsed.count() << "ms to run\n";

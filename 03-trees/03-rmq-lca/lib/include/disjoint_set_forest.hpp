@@ -49,7 +49,7 @@ private:
   std::stack<size_type> m_path_stack;
 
 public:
-  disjoint_set_forest() : m_key_index_map{}, m_node_vec{}, m_path_stack{} {}
+  disjoint_set_forest() = default;
 
   class individual_set_proxy {
     friend class disjoint_set_forest;
@@ -116,7 +116,7 @@ public:
     if (p_left != p_right) link(left, right);
   }
 
-  template <typename t_stream> void dump(t_stream &p_ostream) {
+  template <typename t_stream> void dump(t_stream &p_ostream) const {
     p_ostream << "digraph {\n";
     for (const auto &v : m_key_index_map) {
       p_ostream << "\tnode_" << v.second << " [label = \"" << v.first << "\"];\n";
