@@ -29,10 +29,10 @@ int main() {
     return 1;
   }
 
-  size_t max_index = vec.size() - 1;
+  size_t                                     max_index = vec.size() - 1;
   std::vector<std::pair<unsigned, unsigned>> q_vec{};
   q_vec.reserve(m);
-  
+
   for (unsigned i = 0; i < m; ++i) {
     unsigned left, right;
     if (!(std::cin >> left >> right) || (left >= right) || (left > max_index) || (right > max_index)) {
@@ -42,13 +42,13 @@ int main() {
     q_vec.push_back({left, right});
   }
 
-  auto recursive_start = std::chrono::high_resolution_clock::now();
+  auto   recursive_start = std::chrono::high_resolution_clock::now();
   auto &&ans_rec =
       throttle::recursive_offline_rmq<int, std::less<int>>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
   auto recursive_finish = std::chrono::high_resolution_clock::now();
   auto recursive_elapsed = std::chrono::duration<double, std::milli>(recursive_finish - recursive_start);
 
-  auto iterative_start = std::chrono::high_resolution_clock::now();
+  auto   iterative_start = std::chrono::high_resolution_clock::now();
   auto &&ans_iter =
       throttle::iterative_offline_rmq<int, std::less<int>>(vec.begin(), vec.end(), q_vec.begin(), q_vec.end());
   auto iterative_finish = std::chrono::high_resolution_clock::now();

@@ -36,7 +36,7 @@ public:
 
 private:
   std::vector<node_type> m_node_vec;
-  std::stack<size_type> m_path_stack;
+  std::stack<size_type>  m_path_stack;
 
 public:
   indexed_disjoint_map() = default;
@@ -47,18 +47,14 @@ public:
     using pointer = value_type *;
     using reference = value_type &;
 
-    size_type m_curr_index;
+    size_type             m_curr_index;
     indexed_disjoint_map *m_map;
 
   public:
     individual_set_proxy(size_type m_node, indexed_disjoint_map *p_map) : m_curr_index{m_node}, m_map{p_map} {}
-    reference operator*() {
-      return m_map->at_index(m_curr_index).m_val;
-    }
+    reference operator*() { return m_map->at_index(m_curr_index).m_val; }
 
-    pointer operator->() {
-      return &(m_map->at_index(m_curr_index).m_val);
-    }
+    pointer operator->() { return &(m_map->at_index(m_curr_index).m_val); }
   };
 
   void append_set(const value_type &p_val) {
@@ -67,13 +63,9 @@ public:
   }
 
 private:
-  node_type &at_index(size_type p_index) {
-    return m_node_vec.at(p_index);
-  }
+  node_type &at_index(size_type p_index) { return m_node_vec.at(p_index); }
 
-  size_type &parent_index(size_type p_node) {
-    return at_index(p_node).m_parent_index;
-  }
+  size_type &parent_index(size_type p_node) { return at_index(p_node).m_parent_index; }
 
   size_type find_set_impl(size_type p_node) {
 #ifndef RECURSIVE_FIND_SET
@@ -110,9 +102,7 @@ private:
   }
 
 public:
-  individual_set_proxy find_set(const key_type p_key) {
-    return individual_set_proxy{find_set_impl(p_key), this};
-  }
+  individual_set_proxy find_set(const key_type p_key) { return individual_set_proxy{find_set_impl(p_key), this}; }
 
   void union_set(const key_type p_left, const key_type p_right) {
     size_type left = find_set_impl(p_left), right = find_set_impl(p_right);

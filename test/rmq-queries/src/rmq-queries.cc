@@ -54,10 +54,10 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  size_t max_index = vec.size() - 1;
+  size_t                                     max_index = vec.size() - 1;
   std::vector<std::pair<unsigned, unsigned>> q_vec{};
   q_vec.reserve(m);
-  
+
   for (unsigned i = 0; i < m; ++i) {
     unsigned left, right;
     if (!(std::cin >> left >> right)) {

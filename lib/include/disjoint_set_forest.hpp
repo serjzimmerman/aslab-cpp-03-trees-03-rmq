@@ -45,8 +45,8 @@ public:
 
 private:
   std::unordered_map<key_type, size_type, t_hash, t_eq> m_key_index_map;
-  std::vector<node_type> m_node_vec;
-  std::stack<size_type> m_path_stack;
+  std::vector<node_type>                                m_node_vec;
+  std::stack<size_type>                                 m_path_stack;
 
 public:
   disjoint_set_forest() = default;
@@ -59,18 +59,14 @@ public:
 
   void make_set(const key_type &p_key) {
     size_type index = m_node_vec.size();
-    bool inserted = m_key_index_map.emplace(std::make_pair(p_key, index)).second;
+    bool      inserted = m_key_index_map.emplace(std::make_pair(p_key, index)).second;
     if (inserted) m_node_vec.emplace_back(index);
   }
 
 private:
-  node_type &at_index(size_type p_index) {
-    return m_node_vec.at(p_index);
-  }
+  node_type &at_index(size_type p_index) { return m_node_vec.at(p_index); }
 
-  size_type &parent_index(size_type p_node) {
-    return at_index(p_node).m_parent_index;
-  }
+  size_type &parent_index(size_type p_node) { return at_index(p_node).m_parent_index; }
 
   size_type find_set_impl(size_type p_node) {
 #ifndef RECURSIVE_FIND_SET

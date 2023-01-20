@@ -8,10 +8,11 @@
  * ----------------------------------------------------------------------------
  */
 
-/* This file contains two versions of Offline LCA algorithm in application to solving RMQ in bulk: recursive and iterative. Recursive algorithm is left there for reference. 
- * RMQ is solved using following steps: 
+/* This file contains two versions of Offline LCA algorithm in application to solving RMQ in bulk: recursive and
+ * iterative. Recursive algorithm is left there for reference. RMQ is solved using following steps:
  * 1. Reduce RMQ to LCA by constructing a Cartesian Tree.
- * 2. Traverse the tree in DFS (more similar to Euler tour). During traversal an additional array of visited flags is maintained.
+ * 2. Traverse the tree in DFS (more similar to Euler tour). During traversal an additional array of visited flags is
+ * maintained.
  * 3. Apply Tarjan's algorithm using a Disjoint Set Union.
  *
  */
@@ -42,20 +43,16 @@ protected:
   using map_size_type = typename map_type::size_type;
   using dsu_type = indexed_disjoint_map<map_size_type>;
 
-  map_type m_map; // Cartesian map.
-  dsu_type m_dsu; // Disjoint set.
-  rmq_query_2d_vec m_queries;
+  map_type              m_map; // Cartesian map.
+  dsu_type              m_dsu; // Disjoint set.
+  rmq_query_2d_vec      m_queries;
   std::vector<unsigned> m_ans;
 
   std::vector<bool> m_visited; // Array for visited flags.
 
-  bool visited(const typename map_type::node_proxy &p_node) const {
-    return m_visited.at(p_node.index());
-  }
+  bool visited(const typename map_type::node_proxy &p_node) const { return m_visited.at(p_node.index()); }
 
-  void set_visited(const typename map_type::node_proxy &p_node) {
-    m_visited.at(p_node.index()) = true;
-  }
+  void set_visited(const typename map_type::node_proxy &p_node) { m_visited.at(p_node.index()) = true; }
 
   template <typename t_data_inp_iter, typename t_query_inp_iter>
   offline_rmq_solver_base(t_data_inp_iter p_start_dat, t_data_inp_iter p_finish_dat, t_query_inp_iter p_start_q,
@@ -90,9 +87,7 @@ protected:
   }
 
 public:
-  std::vector<unsigned> get_ans() && {
-    return std::move(m_ans);
-  }
+  std::vector<unsigned> get_ans() && { return std::move(m_ans); }
 };
 
 template <typename T, typename t_comp = std::less<T>>
@@ -133,9 +128,7 @@ private:
   }
 
 public:
-  void fill_ans() {
-    fill_ans_helper(base::m_map.root());
-  }
+  void fill_ans() { fill_ans_helper(base::m_map.root()); }
 };
 
 template <typename T, typename t_comp = std::less<T>>
@@ -158,8 +151,8 @@ public:
 
     while (curr) {
       typename map_type::node_proxy left = curr.left(), right = curr.right();
-      const auto curr_index = curr.index();
-      const bool descending = !base::visited(curr);
+      const auto                    curr_index = curr.index();
+      const bool                    descending = !base::visited(curr);
 
       // Here we came from curr.parent() and neither left or right child have been visited.
       if (descending) {

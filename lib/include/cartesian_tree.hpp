@@ -15,7 +15,7 @@
  * construct the tree is a stack for the rightmost branch (path that is taken from rightmost element to the root). When
  * an element is appended, this branch is traversed upwards while popping the keys from the stack until an element less
  * than inserted key is found. Then the branches are "rotated" to preserve Cartesian tree property.
- * 
+ *
  */
 
 #pragma once
@@ -62,13 +62,9 @@ protected:
 
   t_comp m_comp;
 
-  node_type &at_index(size_type p_index) {
-    return m_tree_vec.at(p_index);
-  }
+  node_type &at_index(size_type p_index) { return m_tree_vec.at(p_index); }
 
-  const node_type &at_index(size_type p_index) const {
-    return m_tree_vec.at(p_index);
-  }
+  const node_type &at_index(size_type p_index) const { return m_tree_vec.at(p_index); }
 
 public:
   cartesian_tree() : m_tree_vec{}, m_key_stack{}, m_rightmost{0}, m_root{0}, m_comp{} {
@@ -76,13 +72,9 @@ public:
                                // It's otherwise unreachable and contains garbage;
   }
 
-  bool empty() const {
-    return !size();
-  }
+  bool empty() const { return !size(); }
 
-  size_type size() const {
-    return m_tree_vec.size() - 1;
-  }
+  size_type size() const { return m_tree_vec.size() - 1; }
 
 protected:
   void append_impl(const t_value_type &p_key) {
@@ -97,7 +89,7 @@ protected:
     }
 
     size_type curr = m_rightmost;
-    bool is_key_less = m_comp(p_key, m_key_stack.top());
+    bool      is_key_less = m_comp(p_key, m_key_stack.top());
     while (curr && is_key_less) {
       curr = at_index(curr).m_parent;
       if (curr) {
@@ -147,7 +139,6 @@ public:
     }
     p_ostream << "}\n";
   }
-
 };
 
 template <typename t_stream, typename t_value_type, typename t_comp>

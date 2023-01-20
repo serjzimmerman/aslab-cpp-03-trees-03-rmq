@@ -46,8 +46,8 @@ public:
 
 private:
   std::unordered_map<key_type, size_type, t_hash, t_eq> m_key_index_map;
-  std::vector<node_type> m_node_vec;
-  std::stack<size_type> m_path_stack;
+  std::vector<node_type>                                m_node_vec;
+  std::stack<size_type>                                 m_path_stack;
 
 public:
   disjoint_map_forest() = default;
@@ -58,34 +58,26 @@ public:
     using pointer = value_type *;
     using reference = value_type &;
 
-    size_type m_curr_index;
+    size_type            m_curr_index;
     disjoint_map_forest *m_map;
 
   public:
     individual_set_proxy(size_type m_node, disjoint_map_forest *p_map) : m_curr_index{m_node}, m_map{p_map} {}
-    reference operator*() {
-      return m_map->at_index(m_curr_index).m_val;
-    }
+    reference operator*() { return m_map->at_index(m_curr_index).m_val; }
 
-    pointer operator->() {
-      return &(m_map->at_index(m_curr_index).m_val);
-    }
+    pointer operator->() { return &(m_map->at_index(m_curr_index).m_val); }
   };
 
   void make_set(const key_type &p_key, const value_type &p_val) {
     size_type index = m_node_vec.size();
-    bool inserted = m_key_index_map.emplace(std::make_pair(p_key, index)).second;
+    bool      inserted = m_key_index_map.emplace(std::make_pair(p_key, index)).second;
     if (inserted) m_node_vec.emplace_back(index, p_val);
   }
 
 private:
-  node_type &at_index(size_type p_index) {
-    return m_node_vec.at(p_index);
-  }
+  node_type &at_index(size_type p_index) { return m_node_vec.at(p_index); }
 
-  size_type &parent_index(size_type p_node) {
-    return at_index(p_node).m_parent_index;
-  }
+  size_type &parent_index(size_type p_node) { return at_index(p_node).m_parent_index; }
 
   size_type find_set_impl(size_type p_node) {
 #ifndef RECURSIVE_FIND_SET

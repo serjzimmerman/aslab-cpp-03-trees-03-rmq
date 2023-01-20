@@ -42,9 +42,7 @@ public:
     }
   }
 
-  void append(const key_type& p_key) {
-    base::append_impl(p_key);
-  }
+  void append(const key_type &p_key) { base::append_impl(p_key); }
 
 public:
   class node_proxy {
@@ -53,53 +51,33 @@ public:
     using size_type = cartesian_set::size_type;
 
     const cartesian_set *m_tree;
-    size_type m_curr_index;
-    const node_type *m_curr_node;
+    size_type            m_curr_index;
+    const node_type     *m_curr_node;
 
     node_proxy(const cartesian_set *p_tree, size_type p_index = 0)
         : m_tree{p_tree}, m_curr_index{p_index}, m_curr_node{&m_tree->at_index(m_curr_index)} {}
 
   public:
-    size_type index() const {
-      return m_curr_index - 1;
-    }
+    size_type index() const { return m_curr_index - 1; }
 
-    node_proxy left() const {
-      return node_proxy{m_tree, m_curr_node->m_left};
-    }
+    node_proxy left() const { return node_proxy{m_tree, m_curr_node->m_left}; }
 
-    node_proxy right() const {
-      return node_proxy{m_tree, m_curr_node->m_right};
-    }
+    node_proxy right() const { return node_proxy{m_tree, m_curr_node->m_right}; }
 
-    node_proxy parent() const {
-      return node_proxy{m_tree, m_curr_node->m_parent};
-    }
+    node_proxy parent() const { return node_proxy{m_tree, m_curr_node->m_parent}; }
 
-    bool valid() const {
-      return m_curr_index;
-    }
+    bool valid() const { return m_curr_index; }
 
-    operator bool() const {
-      return valid();
-    }
+    operator bool() const { return valid(); }
 
-    bool operator==(const node_proxy &p_rhs) const {
-      return m_curr_index == p_rhs.m_curr_index;
-    }
+    bool operator==(const node_proxy &p_rhs) const { return m_curr_index == p_rhs.m_curr_index; }
 
-    bool operator!=(const node_proxy &p_rhs) const {
-      return !(*this == p_rhs);
-    }
+    bool operator!=(const node_proxy &p_rhs) const { return !(*this == p_rhs); }
   };
 
-  node_proxy at(size_type p_index) const {
-    return node_proxy{this, p_index + 1};
-  }
+  node_proxy at(size_type p_index) const { return node_proxy{this, p_index + 1}; }
 
-  node_proxy root() const {
-    return node_proxy(this, base::m_root);
-  }
+  node_proxy root() const { return node_proxy(this, base::m_root); }
 };
 
 } // namespace throttle
