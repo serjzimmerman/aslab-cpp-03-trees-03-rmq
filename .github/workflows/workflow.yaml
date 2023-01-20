@@ -1,0 +1,34 @@
+name: Build and Test CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: CMake config
+      run: | 
+        cmake -S ./ -B build -DCMAKE_BUILD_TYPE=Release
+
+    - name: CMake build
+      run: |
+        cmake --build build
+
+    - name: CMake test
+      run: |
+        env CTEST_OUTPUT_ON_FAILURE=1
+        cmake --build build --target test
